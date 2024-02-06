@@ -8,27 +8,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	def getUser(self, userId):
 		return User.objects.get(id=userId)
 
-	def getOnlineUsers(self):
-		onlineUsers = OnlineUser.objects.all()
-		return [onlineUser.user.id for onlineUser in onlineUsers]
-
-	def addOnlineUser(self, user):
-		try:
-			OnlineUser.objects.create(user=user)
-		except:
-			pass
-
-	def deleteOnlineUser(self, user):
-		try:
-			OnlineUser.objects.get(user=user).delete()
-		except:
-			pass
-
-	def saveMessage(self, message, userId, roomId):
+	def saveMessage(self, message, userId):
 		userObj = User.objects.get(id=userId)
-		chatObj = ChatRoom.objects.get(roomId=roomId)
 		chatMessageObj = ChatMessage.objects.create(
-			chat=chatObj, user=userObj, message=message
+			user=userObj, message=message
+			#, timestamp=
 		)
 		return {
 			'action': 'message',
@@ -37,17 +21,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			'userName': userObj.first_name + " " + userObj.last_name,
 			'timestamp': str(chatMessageObj.timestamp)
 		}
-
-	async def sendOnlineUserList(self):
-		onlineUserList = await database_sync_to_async(self.getOnlineUsers)()
-		chatMessage = {
-			'type': 'chat_message',
-			'message': {
-				'action': 'onlineUser',
-				'userList': onlineUserList
-			}
-		}
-		await self.channel_layer.group_send('onlineUser', chatMessage)
 
 	async def connect(self):
 		self.userId = self.scope['url_route']['kwargs']['userId']

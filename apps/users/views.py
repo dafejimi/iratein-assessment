@@ -6,8 +6,10 @@ from django.contrib.auth import authenticate, login
 from .models import CustomUser, Contact
 from .serializers import CustomUserSerializer, ContactSerializer
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from rest_framework.decorators import api_view
 
+@method_decorator(csrf_exempt, name='dispatch')
 class UserSignupView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
@@ -28,8 +30,9 @@ class UserSignupView(generics.CreateAPIView):
 
         return Response(response_data, status=status.HTTP_201_CREATED)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class UserLoginView(APIView):
-    permission_classes = [AllowAny]
+    #permission_classes = [AllowAny]
 
     @csrf_exempt
     def post(self, request, *args, **kwargs):
@@ -45,6 +48,7 @@ class UserLoginView(APIView):
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ContactListView(generics.ListCreateAPIView):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
@@ -56,6 +60,7 @@ class ContactListView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ContactDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer

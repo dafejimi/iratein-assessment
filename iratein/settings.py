@@ -27,28 +27,66 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    'http://localhost:3030',
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    "http://localhost:3000",
+]
+ALLOWED_HOSTS = [
+    'localhost','127.0.0.1',
+]
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:8000',
+]
+
+CORS_ALLOW_HEADERS = [
+    'Accept',
+    'Accept-Language',
+    'Content-Language',
+    'Content-Type',
+    'Access-Control-Allow-Headers',
+    'Access-Control-Allow-Methods',
+    'Access-Control-Allow-Origin',
+    'Access-Control-Allow-Credentials',
+    "X-CSRFToken",  # Add any additional headers you need
+    "Authorization"
+]
 
 # Application definition
 
 INSTALLED_APPS = [
-    'apps.users',
-    'channels',
     'corsheaders',
+    'rest_framework',
+    'shortuuidfield', 
+    'apps.users',
+    'apps.chat',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -93,21 +131,6 @@ CHANNEL_LAYERS = {
     }
 }
 
-CORS_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-]
-
-CORS_ALLOW_ALL_ORIGINS = True
-
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-]
-ALLOWED_HOSTS = [
-    'localhost','127.0.0.1',
-]
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:8000',
-]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -130,7 +153,13 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ]
+        'rest_framework.permissions.AllowAny',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'iratein.middleware.CsrfExemptSessionAuthentication',
+    ],
+
 }
 
 

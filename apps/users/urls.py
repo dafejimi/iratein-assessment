@@ -1,5 +1,5 @@
 from django.urls import path
-from apps.users.views import ContactDetailView, ContactListView, UserLoginView, UserSignupView
+from apps.users.views import ContactListView, UserLoginView, UserSignupView
 
 urlpatterns = [
 	path('contacts/<int:userId>', ContactListView.as_view(), name='contactList'),
